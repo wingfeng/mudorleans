@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  game.silo:
+    image: ${DOCKER_REGISTRY-}gamesilo
+    build:
+      context: .
+      dockerfile: Game.Silo/Dockerfile
+    ports:
+      - "11111:11111"
+      - "30000:30000"
+    environment:
+      - dbconnection=UseDevelopmentStorage=true
+      
+
+  game.server:
+    image: ${DOCKER_REGISTRY-}gameserver
+    build:
+      context: .
+      dockerfile: Game.Server/Dockerfile
+    ports:
+      - "4444:4444"
+    environment:
+      - dbconnection=UseDevelopmentStorage=true
+    depends_on:
+      - "game.silo"

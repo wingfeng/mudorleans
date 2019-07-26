@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mssql.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "mssql.name" . }}
+    helm.sh/chart: {{ include "mssql.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "mssql.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "mssql.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+     volumes:
+     - name: data
+       hostPath:
+         path: /d/docker_vol/mssql/data        
+         type: DirectoryOrCreate
+     - name: backup
+       hostPath:         
+         path: /d/docker_vol/mssql/backup         
+         type: DirectoryOrCreate
+     - name: transactionlog
+       hostPath:         
+         path: /d/docker_vol/mssql/log 
+         type: DirectoryOrCreate    
+     - name: master
+       hostPath:         
+         path: /d/docker_vol/mssql/data/master 
+         type: DirectoryOrCreate        
+     containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: SA_PASSWORD
+              value: "P@ssword0"
+            - name: MSSQL_DATA_DIR
+              value: /mssql-data/data
+            - name: MSSQL_LOG_DIR
+              value: /mssql-translog/translog
+            - name: MSSQL_BACKUP_DIR
+              value: /mssql-backup/backup
+            - name: MSSQL_MASTER_DATA_FILE
+              value: /mssql-data/master/master.mdf
+            - name: MSSQL_MASTER_LOG_FILE
+              value: /mssql-data/master/mastlog.ldf
+            - name : MSSQL_ERROR_LOG_FILE
+              value: /msql-translog/errorlog
+          ports:
+            - name: mssql
+              containerPort: {{ .Values.service.port }}
+          volumeMounts:
+            - name: data
+              mountPath: /mssql-data/data
+            - name: transactionlog
+              mountPath: /mssql-translog/translog
+            - name: backup
+              mountPath: /mssql-backup/backup
+            - name: master
+              mountPath: /mssql-data/master
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

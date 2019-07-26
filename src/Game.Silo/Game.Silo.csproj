@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <Version>0.0.1</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.Clustering.AzureStorage" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.OrleansAzureUtils" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.OrleansHost" Version="1.5.8" />
+    <PackageReference Include="Microsoft.Orleans.OrleansRuntime" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.OrleansTelemetryConsumers.AI" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.OrleansTelemetryConsumers.Counters" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.Server" Version="2.3.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.12" />
+    <PackageReference Include="OrleansDashboard" Version="2.3.5" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Game.Combat.Grains\Game.Combat.Grains.csproj" />
+    <ProjectReference Include="..\Game.Core.Grains\Game.Core.Grains.csproj" />
+    <ProjectReference Include="..\Game.Core.Interface\Game.Core.Interface.csproj" />
+    <ProjectReference Include="..\Game.Facility.Grains\Game.Facility.Grains.csproj">
+      <Private></Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Game.Facility.Interface\Game.Facility.Interface.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

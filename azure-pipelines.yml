@@ -1,0 +1,81 @@
+# Starter pipeline
+
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: bleddynrichards.Assembly-Info-Task.Assembly-Info-NetCore.Assembly-Info-NetCore@2
+  displayName: 'Set Assembly Manifest Data'
+  inputs:
+    Path: src/Game.Server
+    InsertAttributes: true
+    PackageLicenseUrl: 'https://github.com/wingfeng/mudorleans/License'
+    PackageProjectUrl: 'https://github.com/wingfeng/mudorleans'
+    RepositoryUrl: 'https://github.com/wingfeng/mudorleans'
+    Culture: 'zh-cn'
+    VersionNumber: '0.0.1.$(Build.BuildId)'
+    FileVersionNumber: '0.0.1.$(Build.BuildId)'
+    InformationalVersion: '0.0.1.$(Build.BuildId)'
+    PackageVersion: '0.0.1.$(Build.BuildId)'
+- task: bleddynrichards.Assembly-Info-Task.Assembly-Info-NetCore.Assembly-Info-NetCore@2
+  displayName: 'Set Assembly Manifest Data'
+  inputs:
+    Path: src/Game.Silo
+    InsertAttributes: true
+    PackageLicenseUrl: 'https://github.com/wingfeng/mudorleans/License'
+    PackageProjectUrl: 'https://github.com/wingfeng/mudorleans'
+    RepositoryUrl: 'https://github.com/wingfeng/mudorleans'
+    Culture: 'zh-cn'
+    VersionNumber: '0.0.1.$(Build.BuildId)'
+    FileVersionNumber: '0.0.1.$(Build.BuildId)'
+    InformationalVersion: '0.0.1.$(Build.BuildId)'
+    PackageVersion: '0.0.1.$(Build.BuildId)'    
+- task: Docker@2
+  displayName: Login Azure Registry
+  inputs:
+    containerRegistry: 'wingmsacr'
+    command: 'login'
+    
+- task: Docker@2
+  displayName: buildAndPush Silo
+  inputs:
+    containerRegistry: wingmsacr
+    repository: mud/silo
+    Dockerfile: src/Game.Silo/Dockerfile
+    buildContext: src
+- task: Docker@2
+  displayName: buildAndPush Mud Server
+  inputs:
+    containerRegistry: wingmsacr
+    repository: mud/Server
+    Dockerfile: src/Game.Server/Dockerfile
+    buildContext: src
+- task: HelmDeploy@0
+  displayName: 'helm init'
+  inputs:
+    azureSubscription: 'azure_internal'
+    azureResourceGroup: orleans
+    kubernetesCluster: 'aks-orleans'
+    command: init
+    arguments: '-c'
+- task: HelmDeploy@0
+  inputs:
+    command: 'package'
+    chartPath: 'src/k8s/silo'
+    destination: $(Build.ArtifactStagingDirectory)
+    continueOnError: true
+- task: HelmDeploy@0
+  inputs:
+    command: 'package'
+    chartPath: 'src/k8s/mudserver'
+    destination: $(Build.ArtifactStagingDirectory)
+    continueOnError: boolean
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'

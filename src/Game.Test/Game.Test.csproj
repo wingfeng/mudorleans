@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="Microsoft.Orleans.OrleansHost" Version="1.5.8" />
+    <PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.OrleansRuntime" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="2.3.5" />
+    <PackageReference Include="Microsoft.Orleans.TestingHost" Version="2.3.5" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Game.Combat.Grains\Game.Combat.Grains.csproj" />
+    <ProjectReference Include="..\Game.Combat.Interface\Game.Combat.Interface.csproj" />
+    <ProjectReference Include="..\Game.Core.Grains\Game.Core.Grains.csproj" />
+    <ProjectReference Include="..\Game.Core.Interface\Game.Core.Interface.csproj" />
+    <ProjectReference Include="..\Game.Facility.Grains\Game.Facility.Grains.csproj" />
+    <ProjectReference Include="..\Game.Facility.Interface\Game.Facility.Interface.csproj" />
+    <ProjectReference Include="..\Game.MudLib\Game.MudLib.csproj" />
+  </ItemGroup>
+
+</Project>

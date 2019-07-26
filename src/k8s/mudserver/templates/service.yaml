@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mudserver.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "mudserver.name" . }}
+    helm.sh/chart: {{ include "mudserver.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 4444
+      protocol: TCP
+      name: mudport
+  selector:
+    app.kubernetes.io/name: {{ include "mudserver.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
